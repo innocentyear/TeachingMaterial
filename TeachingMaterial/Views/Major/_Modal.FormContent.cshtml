@@ -1,0 +1,35 @@
+﻿@model TeachingMaterial.Models.MajorViewModel
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @*<input type="hidden" name="MajorID" value = "@Model.Major.MajorID"/>*@
+        @Html.HiddenFor(vm =>vm.MajorID)
+        <div class="form-group">
+            @Html.LabelFor(model =>model.MajorName,htmlAttributes:new { @class ="control-label col-md-2"})
+            @*@Html.LabelFor(model => model.Major.MajorName, htmlAttributes: new { @class = "control-label col-md-2" })*@
+            <div class="col-md-10">
+                @Html.TextBoxFor(model =>model.MajorName,htmlAttributes:new { @class="form-control"})
+              @* @Html.TextBox("MajorName",Model.Major.MajorName,htmlAttributes:new { @class="form-control" })*@
+                 @*<input type="text" name="MajorName" value="@Model.Major.MajorName" class="form-control" /> *@
+                @Html.ValidationMessageFor(model => model.MajorName, "", new { @class = "text-danger" })            
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DepartmentID">部门</label>
+            <div class="col-md-10">
+             @Html.DropDownList("DepartmentID", Model.DepartmentsList, new { @class = "form-control" })
+             
+                @* 这种原始的Html方式也可以实现下拉框的选择。
+                <select name="DepartmentID" class="form-control">
+                    @foreach (var item in Model.DepartmentsList)
+                    {
+                        string selectedOrNot = item.Selected ? "selected" : null;
+                        <option value="@item.Value" selected ="@selectedOrNot">@item.Text</option>
+                    }
+                    
+                </select>
+               *@
+            </div>
+        </div>
+

@@ -1,0 +1,24 @@
+﻿@model IEnumerable<TeachingMaterial.Models.NoticeIndexViewModel>
+
+<div class="panel">
+    <div class="panel-heading">
+        <h2 class="panel-title"><span class="glyphicon glyphicon-volume-up"> 公 告</span></h2>
+    </div>
+    <table class="table">
+        @foreach (var notice in Model)
+        {
+            <tr>
+                <td>
+                    @*<a href="@Url.Action("ShowNotice", "Notice", new { NoticeID =notice.NoticeID})" style="text-decoration:none;color:#333333">@notice.NoticeTitle</a>*@
+                    @notice.NoticeTitle
+                </td>
+
+                <td>@Html.DisplayFor(modelItem => notice.PostTime)</td>@*//强类型的辅助方法会引用模型类的数据注解，显示成日期格式。如果此时使用 @article.PostTime 而不是使用DisplayFor强类型的辅助方法，还是会显示日期时间格式。而不是仅有日期格式。*@
+            </tr>
+        }
+
+    </table>
+
+</div>
+
+

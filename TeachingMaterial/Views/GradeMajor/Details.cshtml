@@ -1,0 +1,42 @@
+﻿@model TeachingMaterial.Models.GradeMajor
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>GradeMajor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Grade.GradeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Grade.GradeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Major.MajorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Major.MajorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GradeMajorIsValidate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GradeMajorIsValidate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.GradeMajorID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

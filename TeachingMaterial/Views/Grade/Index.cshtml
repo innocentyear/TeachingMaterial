@@ -1,0 +1,120 @@
+﻿@model IEnumerable<TeachingMaterial.Models.Grade>
+
+@{
+    ViewBag.Title = "年级管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" @*data-target="#majorModal"*@ id="triggerModal-btn" onclick="updateGrade(null,'create')">新建年级</button>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model =>model.GradeID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GradeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GradeStudentNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model =>model.GradeIsValidate)
+            </th>
+           
+            <th></th>
+        </tr>
+    </thead>   
+
+@foreach (var item in Model) {
+   <tbody>
+       <tr>
+           <td>
+               @Html.DisplayFor(modelItem =>item.GradeID)
+           </td>
+           <td>
+               @Html.DisplayFor(modelItem => item.GradeName)
+           </td>
+           <td>
+               @Html.DisplayFor(modelItem =>item.GradeStudentNumber)
+           </td>
+           <td>
+               @(item.GradeIsValidate ? "有效" : "无效")
+           </td>
+           <td>
+               <a href="javascript:updateGrade('@item.GradeID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+               <a href="javascript:updateGrade('@item.GradeID', 'delete')">删除</a> 
+
+            @* @Html.ActionLink("Edit", "Edit", new { id = item.GradeID }) |
+               @Html.ActionLink("Details", "Details", new { id = item.GradeID }) |
+               @Html.ActionLink("Delete", "Delete", new { id = item.GradeID })*@
+           </td>
+       </tr>
+
+   </tbody>
+    
+}
+
+</table>
+
+
+@{ Html.RenderPartial("_Modal");} @*模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+            $("#modal").on("click", "#operate-btn", function () {
+                $("#modalForm").submit();
+
+            });
+
+
+
+        });
+
+
+
+        function updateGrade(id, action) {
+            var currentId = id;
+            var path;
+            switch (action) {
+                case 'create':
+                    $("#modal #modalLabel").text("新建年级");
+                    $("#modal #operate-btn").text("确认新建");
+                    path = "/grade/create/" + currentId; //jquery接将路径；使用+号；
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'edit':
+                    $("#modal #modalLabel").text("编辑年级");
+                    $("#modal #operate-btn").text("确认修改");
+                    path = "/grade/Edit/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'delete':
+                    $("#modal #modalLabel").text("删除年级");
+                    $("#modal #operate-btn").text("确认删除");
+                    path = "/grade/Delete/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                default:
+                    console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+            }
+
+            $.get("/Grade/GetAGrade", { id: currentId }).success(function (data) {
+                $("#modal #modalFormPlaceHolder").html(data); //ajax加载的数据，必须在数据加载后的回调函数中的加载数据后，立即使用重新定义验证规则，以施加表单重新验证。
+                $("form").removeData("validator").removeData("unobtrusiveValidation"); // 这两行js代码增加对 模态框分部视图 验证的支持。原来页面渲染的时候已经验证过了，所有不验证了。加上这两行，就删除了原来的验证，加上新的验证。
+                $.validator.unobtrusive.parse($("form"));
+            });
+
+            $("#modal").modal('show');
+
+        }
+
+    </script>
+
+
+}

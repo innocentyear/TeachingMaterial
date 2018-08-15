@@ -1,0 +1,163 @@
+﻿@model TeachingMaterial.Models.EditUserViewModel
+
+@{
+    ViewBag.Title = "我的个人信息";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="form-horizontal">
+    <hr />
+    <div class="form-group">
+        <label class="control-label col-md-2">用户名  </label>
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.UserName)</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("电子邮箱", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.Email)</p>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        @Html.Label("姓名", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.RealName)</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("性别", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.Gender)</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("出生日期", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.Birthday)</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("年龄", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.Age)</p>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        @Html.Label("所属部门", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">@Html.DisplayFor(model => model.DepartmentName)</p>
+        </div>
+    </div>
+
+
+
+
+    <div class="form-group">
+        @Html.Label("拥有的角色", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <p class="form-control-static">
+                @if (Model.RolesList != null)
+                {
+                    foreach (var roleItem in Model.RolesList)
+                    {
+                        <text> @roleItem.Text |</text>
+
+                    }
+                }
+
+            </p>
+        </div>
+    </div>
+
+</div>
+
+
+@*<div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.UserName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UserName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.RealName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RealName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Birthday)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Birthday)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Age)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Age)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.InCollege)
+            </dt>
+
+            <dd>
+               @(Model.InCollege ?"校内":"校外")
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DepartmentName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DepartmentName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model =>model.ProfessionalTitle)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model =>model.ProfessionalTitle)
+            </dd>
+
+        </dl>
+    </div>
+*@
+<p>
+    @Html.ActionLink("修改个人信息", "Edit", new { id = Model.Id })
+
+</p>
+

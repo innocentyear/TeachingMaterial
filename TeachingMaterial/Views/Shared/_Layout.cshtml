@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 教材征订系统</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("教材征订系统", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        @if (ViewBag.SubscriptionInfo != null)
+                        {
+                           <a href="#"> @ViewBag.SubscriptionInfo.ToString()</a>
+                        }
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="body-content container-fluid">
+        <div class="row">
+            <div class="col-md-2" id="LayoutLeftMenu">
+                @Html.Partial("_LeftMainMenu")
+            </div>
+            <div class="col-md-10">
+                @RenderBody()
+            </div>
+        </div>
+
+        <hr />
+        <footer class="text-center">
+            <p>&copy; 宜宾职业技术学院教务处 @DateTime.Now.Year - 教材征订系统 （建议使用谷歌浏览器访问）</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $(function () {
+            $("#Hello").text(GetTime);
+            function GetTime() {
+                now = new Date();
+                hour = now.getHours();
+                if (hour < 6)
+                { return "凌晨好 "; }
+                else if (hour < 9)
+                { return "早上好 " }
+                else if (hour < 12) { return "上午好 "; }
+                else if (hour < 14) { return "中午好 "; }
+                else if (hour < 17) { return "下午好 "; }
+                else { return "晚上好 "; }
+            }
+        });
+    </script>
+</body>
+</html>

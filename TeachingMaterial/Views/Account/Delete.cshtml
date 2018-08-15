@@ -1,0 +1,59 @@
+﻿@model TeachingMaterial.Models.ApplicationUser
+@{
+    ViewBag.Title = "删除用户";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>你确定删除此账户吗？</h3>
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            用户名
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RealName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RealName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Department.DepartmentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Department.DepartmentName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="删除" class="btn btn btn-danger" /> |
+            @Html.ActionLink("返回用户列表", "Index")
+        </div>
+    }
+</div>

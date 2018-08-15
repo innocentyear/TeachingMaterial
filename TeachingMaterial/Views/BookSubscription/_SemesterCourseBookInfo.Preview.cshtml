@@ -1,0 +1,111 @@
+﻿@model SemesterCourseBookInfoViewModel
+@using TeachingMaterial.Models
+
+<table class="table table-bordered table-striped" id="studentBookInfo">
+    <caption>学生教材征订信息</caption>
+    <thead>
+        <tr>
+            <th>教材名称</th>
+            <th>作者姓名</th>
+            <th>ISBN</th>
+            <th>出版社</th>
+            <th>出版日期</th>
+            <th>教材类别</th>
+            <th>定价</th>
+            <th>征订数量</th>
+            <th>订单价格</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.StudentBookSubscription)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Press)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishingDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem =>item.BookSubscriptionNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem =>item.SubscriptionPrice)
+                </td>
+            </tr>
+            
+        }
+    </tbody>
+  
+</table>
+
+<hr />
+
+<table class="table table-bordered table-striped" id="teacherBookInfo">
+    <caption>教师用书征订信息</caption>
+    <thead>
+        <tr>
+            <th>教材名称</th>
+            <th>作者姓名</th>
+            <th>ISBN</th>
+            <th>出版社</th>
+            <th>出版日期</th>
+            <th>教材类别</th>
+            <th>定价</th>
+            <th>征订数量</th>
+            <th>订单价格</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TeacherBookSubscription)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Press)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishingDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookSubscriptionNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubscriptionPrice)
+                </td>
+            </tr>
+
+        }
+    </tbody>
+
+</table>
+

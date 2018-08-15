@@ -1,0 +1,147 @@
+﻿@model IEnumerable<TeachingMaterial.Models.Semester>
+
+@{
+    ViewBag.Title = "学期管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" data-target="#semesterModal" id="triggerModal-btn">新建学期</button>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SemesterID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SemesterName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDateOfSubscription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OverDateOfSubscription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SwitchOfSubscription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsCurrentSemester)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubscriptionState)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SemesterID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SemesterName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDateOfSubscription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OverDateOfSubscription)
+                </td>
+                <td>
+                    @(item.SwitchOfSubscription ? "打开" : "关闭")
+                </td>
+                <td>
+                    @(item.IsCurrentSemester ? "当前征订学期" : "非当前征订学期")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem =>item.SubscriptionState)
+                </td>
+                <td>
+                  @*  @Html.ActionLink("编辑", "Edit", new { id = item.SemesterID }) |*@
+                    <a href="javascript:updateSemester('@item.SemesterID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+                  @*  @Html.ActionLink("删除", "Delete", new { id = item.SemesterID }) *@
+                    <a href="javascript:updateSemester('@item.SemesterID', 'delete')">删除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+
+@{ Html.RenderPartial("_Semester.Modal");} @*模态框 在视图层级中越往外层越好。*@
+
+@section Scripts{
+   @Scripts.Render("~/bundles/jqueryval") 
+    <script>
+        $(function () {
+            $("#triggerModal-btn").click(function () {
+                $("#semesterModal #semesterModalLabel").text("新建学期");
+                $("#semesterModal #operateSemester-btn").text("新建");
+                $("#semesterModal #semesterPreview").load('@Url.Action("GetEmptySemester")', null, function ()
+                {
+                    $("form").removeData("validator").removeData("unobtrusiveValidation");
+                    $.validator.unobtrusive.parse($("form"));
+                }); //先弹出模态框，再Ajax加载内容。
+               
+              
+            });
+
+            //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+            $("#semesterModal").on("click", "#operateSemester-btn", function () {
+                $("#semesterModal #semesterForm").submit();
+            })
+
+        });
+
+        function updateSemester(id, action)
+        {
+            var currentId = id;
+
+            switch (action)
+            {
+                case 'edit':
+                    $.post("/Semester/GetEditSemester", { id: currentId }).success(function (data) {
+                        $("#semesterModal #semesterPreview").html(data);   //使用ajax返回的数据使用 jquery的html()获得的数据，只能读取，不能更改。
+                        $("form").removeData("validator").removeData("unobtrusiveValidation");
+                        $.validator.unobtrusive.parse($("form"));
+                    });
+                    $("#semesterModal #semesterModalLabel").text("编辑学期");
+                    $("#semesterModal #operateSemester-btn").text("确认修改");
+                    // $("#categoryForm").attr('action', '@Url.Action("Edit")'); //在javascript 中 只能使用控制器操作方法的如 @* @Url.Action("Delete") ，而不能使用带路由值的Url方法，如@Url.Action("Delete", new { id = currentId })。*@
+                   //使用attr 属性与设置的值必须加引号，单引号或双引号都可以。
+                   // $("#categoryForm").attr('action', '/Category/Edit' + currentId);
+                   $("#semesterModal").modal('show');
+                    break;
+                 case 'delete':
+                   $.post("/Semester/GetDeleteSemester", { id: currentId }).success(function (data) {
+                       $("#semesterModal #semesterPreview").html(data);  //使用ajax返回的数据使用 jquery的html()获得的数据，只能读取，不能更改。
+                       $("form").removeData("validator").removeData("unobtrusiveValidation");
+                       $.validator.unobtrusive.parse($("form"));
+                   });
+                   $("#semesterModal #semesterModalLabel").text("删除学期");
+                   $("#semesterModal #operateSemester-btn").text("确认删除");
+                   // $("#categoryForm").attr('action', '@Url.Action("Delete")');
+                   $("#semesterModal").modal('show');
+                   /*
+                    $("#categoryModal #operateCategory-btn").click(function () {
+                    $("#categoryModal #CategoryForm").submit();
+                   });
+                  */
+
+                break;
+            default:
+                console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+
+
+            }
+        }
+
+    </script>
+    
+    }

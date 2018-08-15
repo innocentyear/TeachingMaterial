@@ -1,0 +1,618 @@
+﻿@model  PagedList.IPagedList<TeachingMaterial.Models.SemesterCourse>
+@using PagedList.Mvc;
+@using TeachingMaterial.Models;
+@{
+    ViewBag.Title = "教材征订管理";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert"
+            aria-hidden="true">
+        &times;
+    </button>
+    各年级专业学生人数由系统里面各班人数自动生成，将决定各门学期课程的教材征订数量。如认为数量不准确，请到质量科核实，更改系统里各班的人数。
+</div>
+@using (Html.BeginForm("Index", "BookSubscription", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <label for="pageSize" class="control-label">每页指定记录数：</label>
+    <div class="form-group">
+        <input type="number" name="pageSize" value="@ViewBag.pageSize" class="form-control" size="1" maxlength="4" min="1" max="1000" /> @* 使用新的Html5标签 <input type="number">*@
+        @* @Html.TextBox("pageSize", ViewBag.pageSize as string, htmlAttributes: new { @class = "form-control", size = "1", maxlength = "2" })*@
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="semesterID" class="control-label">学期：</label>
+    <div class="form-group">
+        @Html.DropDownList("semesterID", ViewBag.semesterSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="gradeID" class="control-label">年级：</label>
+    <div class="form-group">
+        @Html.DropDownList("gradeID", ViewBag.gradeSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="departmentID" class="control-label">部门：</label>
+    <div class="form-group">
+        @Html.DropDownList("departmentID", ViewBag.departmentSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control", id = "indexDepartment" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="majorID" class="control-label">专业：</label>
+    <div class="form-group">
+        @Html.DropDownList("majorID", ViewBag.majorSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control", id = "indexMajor" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="courseType" class="control-label">课程类型：</label>
+    <div class="form-group">
+        @Html.DropDownList("courseType", ViewBag.courseTypeList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <br /><br />
+
+    <label for="isSubmmit" class="control-label">是否提交：</label>
+    <div class="form-group">
+        @Html.DropDownList("isSubmmit", ViewBag.isSubmmitSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="courseName" class="control-label">查找课程：</label>
+    <div class="form-group">
+        @Html.TextBox("courseName", ViewBag.CourseName as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入课程名称" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+
+    <input type="submit" value="确定" class="btn btn-primary" />
+}
+
+<div class="btn-group pull-right">
+    <button class="btn btn-success" id="needStudentBook-btn">批量设定需要征订学生教材</button>
+    <button class="btn btn-warning" id="needNotStudentBook-btn">批量设定不需要征订学生教材</button>
+    <button class="btn btn-success" id="needTeacherBook-btn">批量设定需要征订教师用书</button>
+    <button class="btn btn-warning" id="needNotTeacherBook-btn">批量设定不需要征订教师用书</button>
+    <button class="btn btn-success" id="submmit-btn">批量提交</button>
+    <button class="btn btn-warning" id="cancelSubmmit-btn">批量取消提交</button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered  pre-scrollable" style="font-size:10px">
+        <thead>
+            <tr class="text-center">
+                <th rowspan="2" style="vertical-align: middle !important">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="allSemesterCourse" id="allSemesterCourse" />
+                    </label>
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("学期", "Index", new { sortOrder = ViewBag.SemesterIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("年级", "Index", new { sortOrder = ViewBag.GradeIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("专业名称", "Index", new { sortOrder = ViewBag.MajorIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("课程代码", "Index", new { sortOrder = ViewBag.CourseNumberSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("课程名称", "Index", new { sortOrder = ViewBag.CourseNameSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("课程类型", "Index", new { sortOrder = ViewBag.CourseTypeSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+
+                <th colspan="4" class="text-center" style="vertical-align: middle !important">
+                    学生教材征订
+                </th>
+                <th colspan="3" class="text-center" style="vertical-align: middle !important">
+                    教师用书征订
+                </th>
+
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("提交状态", "Index", new { sortOrder = ViewBag.IsSubmmitSortParm, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+
+
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("征订教师", "Index", new { sortOrder = ViewBag.SubscriptionUserSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+                <th rowspan="2" style="vertical-align: middle !important">
+                    @Html.ActionLink("征订时间", "Index", new { sortOrder = ViewBag.SubscriptionTimeSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize })
+                </th>
+
+            </tr>
+
+            <tr>
+                <th>学生人数</th>
+                <th>是否征订</th>
+                <th>征订学生教材</th>
+                <th>已订本数</th>
+                <th>是否征订</th>
+                <th>征订教师用书</th>
+                <th>已订本数</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" class="semesterCourse" name="semesterCourse" value="@item.SemesterCourseID" />
+                        </label>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Semester.SemesterName, new { htmlAttributes = new { @class = "scSemester" } })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GradeMajor.Grade.GradeName, new { htmlAttributes = new { @class = "scGrade" } })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GradeMajor.Major.MajorName, new { htmlAttributes = new { @class = "scMajor" } })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SemesterCourseNumber)
+                    </td>
+                    <td>
+                        <a href="javascript:showBookSubscription('@item.SemesterCourseID','@item.Semester.SemesterName','@item.GradeMajor.Grade.GradeName','@item.GradeMajor.Major.MajorName','@item.SemesterCourseName')" class="scCourse">@item.SemesterCourseName</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CourseType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GradeMajor.GradeMajorStudentNumber)
+                    </td>
+                    <td>
+                        @if (item.IsNeedStudentBook != null)
+                        {
+                            @(item.IsNeedStudentBook == true ? "需要征订" : "不征订")
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.IsNeedStudentBook != null)
+                        {
+                            if (item.IsNeedStudentBook == true)
+                            {
+                                <a href="javascript:chooseBook('@item.SemesterCourseID', 'studentBook','@item.Semester.SemesterName','@item.GradeMajor.Grade.GradeName','@item.GradeMajor.Major.MajorName','@item.SemesterCourseName')">征订学生教材</a>
+                            }
+                        }
+                    </td>
+                    <td class="studentBookNumber">
+                        @{
+                            var studentBookNumber = from c in item.BookSubscriptions
+                                                    where c.SubscriptionType == SubscriptionType.学生教材
+                                                    select c.BookSubscriptionNumber;
+                        }
+                        @((int)(studentBookNumber.Sum()))
+                    </td>
+
+                    <td>
+                        @if (item.IsNeedTeacherBook != null)
+                        {
+                            @(item.IsNeedTeacherBook == true ? "需要征订" : "不征订")
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.IsNeedTeacherBook != null)
+                        {
+                            if (item.IsNeedTeacherBook == true)
+                            {
+                                <a href="javascript:chooseBook('@item.SemesterCourseID', 'teacherBook','@item.Semester.SemesterName','@item.GradeMajor.Grade.GradeName','@item.GradeMajor.Major.MajorName','@item.SemesterCourseName')">征订教师用书</a>
+                            }
+                        }
+                    </td>
+                    <td class="teacherBookNumber">
+                        @{
+                            var teacherBookNumber = from c in item.BookSubscriptions
+                                                    where c.SubscriptionType == SubscriptionType.教师用书
+                                                    select c.BookSubscriptionNumber;
+                        }
+                       
+                        @((int)(teacherBookNumber.Sum()))
+                    </td>
+                    <td>
+                        @( item.SubmmitState == true ? "已提交" : "未提交")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubscriptionUserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubscriptionTime)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <td class="text-muted" colspan="10">
+                    你当前选中了 <span id="selectedCount"></span> 条记录，每页 @Model.PageSize 条记录，共有 @Model.TotalItemCount 条记录。第 @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) 页，共 @Model.PageCount 页。
+                </td>
+                <td id="totalStudentBookNumber"></td>
+                <td colspan="2"></td>
+                <td id="totalTeacherBookNumber"></td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, isSubmmit = ViewBag.IsSubmmit, pageSize = ViewBag.pageSize }),
+                               new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 5, DisplayItemSliceAndTotal = false }
+)
+
+
+@{ Html.RenderPartial("_SubscriptionBook.Modal");} @* 选择教材的模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+@{ Html.RenderPartial("_BulkSetSubscriptionConfirm.Modal");} @* 批量设置是否需要学生教材、教师用书、是否提交模态框*@
+@{ Html.RenderPartial("_SemesterCourseBookInfo.Modal");} @* 用于显示学生教材和教师用书的征订情况。模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+@section Scripts{
+    <script>
+      $(function () {
+          //由于Get形式的查询表单IPagedList<>的模型也引用的是 领域模型而筛选ID为整型，不可以空，因此，表单提交的时候执行非侵入式验证会，传递为“全部”的筛选值，id会为空，默认阻止提交。
+          //虽然执行这段代码会取消表单对 ID空值的验证，表单能正确提交，但是chorome会报错。
+          @* $("form").removeData("validator").removeData("unobtrusiveValidation"); *@
+
+          //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+          $("#modal").on("click", "#operate-btn", function () {
+              $("#modalForm").submit();
+
+          });
+
+
+          var totalStudentBookNumber = 0;
+          var totalTeacherBookNumber= 0;
+          $("tr .studentBookNumber").each(function () {
+              totalStudentBookNumber += parseFloat($(this).text());
+          });
+
+          $("tr .teacherBookNumber").each(function () {
+              totalTeacherBookNumber += parseFloat($(this).text());
+          });
+
+          $("tr #totalStudentBookNumber").text(parseFloat(totalStudentBookNumber));
+          $("tr #totalTeacherBookNumber").text(parseFloat(totalTeacherBookNumber));
+
+
+
+
+
+           $("#indexDepartment").change(function () {
+                  var selectedDepartmentId = $("#indexDepartment").val();
+                    $.getJSON('@Url.Action("GetMajorList")', { departmentID: selectedDepartmentId }).success(function (data) {
+                        $("#indexMajor").empty();
+                        $("#indexMajor").append("<option value=''>全部</option>");
+                        $.each(data, function (i, p) {
+                            $("#indexMajor").append("<option value='" + p.majorID + "' >" + p.majorName + "</option>");
+                        });
+                    });
+
+          });
+
+
+           selectedSemesterCourse(); //页面每次加载，都计算一次选中的复选框。
+
+           @*使用prop则完美实现复选框的全选和反选, 又简洁 *@
+           $("#allSemesterCourse").click(function () {
+               var isChecked = $(this).prop("checked");
+               $(".semesterCourse").prop("checked", isChecked);
+               selectedSemesterCourse();
+           });
+
+           @*更改一个筛选框，都需要重新计算选中的所有复选框 *@
+           $(".semesterCourse").click(function () {
+               selectedSemesterCourse();
+           });
+
+
+
+           var modalTitle = $("#semesterCourseModal #semesterCourseModalLabel");
+           var modalBody = $("#semesterCourseModal #semesterCoursePreview");
+           var modalButton = $("#semesterCourseModal #confirmSet-btn");
+
+           //批量设置需要征订学生教材
+           $("#needStudentBook-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("设置需要征订学生教材的学期课程");
+                   modalButton.text("确认需要征订");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程需要征订学生教材吗？");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetNeedStudentBook", { selectedIds: selectedProjectsId, expected: true }).success(function (data) {
+                           alert(data + "条记录成功设置为需要征订教材。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+           //批量设置不需要征订学生教材
+           $("#needNotStudentBook-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("设置不征订学生教材的学期课程");
+                   modalButton.text("确认不征订");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程不征订学生教材吗？选择不征订教材将会清空以前的征订记录！");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetNeedStudentBook", { selectedIds: selectedProjectsId, expected: false }).success(function (data) {
+                           alert(data + "条记录成功设置为不征订教材。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+
+           //批量设置需要征订教师用书
+           $("#needTeacherBook-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("设置需要征订教师用书的学期课程");
+                   modalButton.text("确认需要征订");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程需要征订教师用书吗？");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetNeedTeacherBook", { selectedIds: selectedProjectsId, expected: true }).success(function (data) {
+                           alert(data + "条记录成功设置为需要征订教师用书。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+           //批量设置不需要征订教师用书
+           $("#needNotTeacherBook-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("设置不征订教师用书的学期课程");
+                   modalButton.text("确认不征订");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程不征订教师用书吗？选择不征订教师用书将会清空以前的征订记录！");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetNeedTeacherBook", { selectedIds: selectedProjectsId, expected: false }).success(function (data) {
+                           alert(data + "条记录成功设置为不征订教师用书。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+
+           //批量设置学期课程 教材征订信息设置成提交。
+           $("#submmit-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("提交学期课程的教材征订信息");
+                   modalButton.text("确认提交");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程征订教材信息提交吗？提交后就不可更改？");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetSubmmit", { selectedIds: selectedProjectsId, expected: true }).success(function (data) {
+                           alert(data + "条记录成功提交。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+           //批量设置学期课程,取消提交。 教材征订设置成未提交。
+           $("#cancelSubmmit-btn").click(function () {
+               var selectedProjectsId = selectedSemesterCourse();
+               if (selectedProjectsId.length == 0) {
+                   alert("请至少选择1条记录");
+                   return;
+               }
+               else {
+                   modalTitle.text("取消提交学期课程的教材征订信息");
+                   modalButton.text("确认取消提交");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-prefix").text("你确认");
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-content").html(selectedProjectsId.length);
+                   $("#semesterCourseModal #semesterCoursePreview #modalbody-suffix").html("门学期课程教材征订取消提交吗？");
+                   $("#semesterCourseModal").modal('show');
+                   modalButton.click(function () {
+                       $.post("/BookSubscription/MassSetSubmmit", { selectedIds: selectedProjectsId, expected: false }).success(function (data) {
+                           alert(data + "条记录成功取消提交。");
+                           location.href = location.href;
+                       });
+                   });
+               }
+           });
+
+
+
+
+          // 模态框中的 列表框互相移动 选择的教材
+
+           $("#subscriptionBookModal #btn_addItems").click(function () {
+               var items = $("#subscriptionBookModal #leftExperts option:selected");
+               items.clone().appendTo("#subscriptionBookModal #rightExperts");
+               items.remove();
+
+           });
+
+           $("#subscriptionBookModal #btn_subItems").click(function () {
+               var items = $("#subscriptionBookModal #rightExperts option:selected");
+               items.clone().appendTo("#subscriptionBookModal #leftExperts");
+               items.remove();
+
+           });
+
+
+      })  @*预先加载完毕*@
+
+
+
+
+        function chooseBook(id, bookUseage, semester, grade, major, course) {
+            if (bookUseage == "studentBook") {
+                $("#subscriptionBookModal #subscriptionBookModalLabel").text(semester + grade + major + "专业" + "《" + course + "》课程" + "学生教材征订");
+                $("#subscriptionBookModal #bookSubscriptionToolip").text("学生教材的征订数量根据年级专业人数自动生成，如发现不准确，可到质量科核实,在系统里面修改各班的人数。");
+                $("#subscriptionBookModal #bookSubscriptionNumberLabel").text("请确认该课程学生教材征订数量：");
+               
+             }
+          else
+            {
+                $("#subscriptionBookModal #subscriptionBookModalLabel").text(semester + grade + major + "专业" + "《" + course + "》课程" + "教师用书征订");
+                $("#subscriptionBookModal #bookSubscriptionToolip").text("教师用书规定公共课总计不能超过10本，专业课不超过3本。不需要教师用书直接点关闭。");
+                $("#subscriptionBookModal #bookSubscriptionNumberLabel").text("请输入该学期教师用书征订数量：");
+            }
+          
+
+          initializeSubscriptionBookModal(id, bookUseage);
+
+          $("#subscriptionBookModal").modal('show');
+
+          @*利用ajax方式的提交，由于表单提交不成功。*@
+          $("#subscriptionBookModal #specifiedExperts-btn").click(function () {
+              $("#specifiedExpertsModal").modal('hide');
+              var choosedBooksIDs = selectedBooksID();
+              var bookSubscriptNumber = $("#subscriptionBookModal #bookSubscriptionNumber").val();
+              $.post("BookSubscription/BookSubscript", { semesterCourseID: id, bookUse: bookUseage, bookSubscriptionNumber: bookSubscriptNumber, chooseBooksIDs: choosedBooksIDs }, function (data) {
+                  alert(data + "门教材更改成功。");
+
+                  location.href = location.href;
+
+              });
+          });
+
+      }
+
+      //获取所有选中的复选框，放入数组中并返回
+      function selectedSemesterCourse() {
+          var valueArray = new Array();
+          var checkedSemsterCourses = $(".semesterCourse:checked");//获取选中的记录.
+          $(".semesterCourse:checked").each(function () {
+              var value = $(this).val().toString();
+              valueArray.push(value);
+          });
+
+          $("#selectedCount").text(checkedSemsterCourses.length); //获取选中的记录， 选中的记录数
+          // $("#selectedCount").text($(".applicationProject:checked").length);//$(".applicationProject:checked")获取选中的记录， 选中的记录数
+          return valueArray;
+
+      }
+
+
+        //将教材 征订是属于学生教材 还是教师用书也写进去了。
+      function initializeSubscriptionBookModal(id,bookUseage)
+      {
+          var searchString = $("#subscriptionBookModal #bookSearchString").val();
+
+          if (bookUseage == "teacherBook") {
+              $("#subscriptionBookModal #bookSubscriptionNumber").removeAttr('readonly');
+          }
+          else
+          {
+              $("#subscriptionBookModal #bookSubscriptionNumber").attr('readonly', 'readonly');  //加上这名避免有时出现模态框未及时更新，造成学生人数也可以修改数量。
+          }
+
+          $.get('@Url.Action("GetSubscriptionStudentNumber")', { semesterCourseID: id, bookUseage: bookUseage }).success(function (data) {
+                  $("#subscriptionBookModal #bookSubscriptionNumber").val(data);
+           });
+
+          $.getJSON('@Url.Action("GetBookList")', { searchBookString: searchString,semesterCourseID:id, bookUseage:bookUseage }).success(function (data) {
+                    $("#subscriptionBookModal #leftExperts").empty(); //清空左边备选列表框
+                        $.each(data, function (i, p) {
+                            $("#subscriptionBookModal #leftExperts").append("<option value='" + p.BookID + "' >" + p.BookInfo + "</option>");
+                        });
+                });
+
+
+          $.getJSON('@Url.Action("GetExitBookList")', { semesterCourseID: id, bookUseage:bookUseage }).success(function (data) {
+              $("#subscriptionBookModal #rightExperts").empty(); //清空右边的列表框
+              $.each(data, function (i, p) {
+                  $("#subscriptionBookModal #rightExperts").append("<option value='" + p.BookID + "' >" + p.BookInfo + "</option>");
+                        });
+          });
+
+          
+
+
+
+          $("#subscriptionBookModal #searchBook-btn").click(function () {
+              var searchString = $("#subscriptionBookModal #bookSearchString").val();
+              $.getJSON('@Url.Action("GetBookList")', { searchBookString: searchString, semesterCourseID: id, bookUseage: bookUseage }).success(function (data) {
+                $("#subscriptionBookModal #leftExperts").empty(); //清空左边备选列表框
+                   $.each(data, function (i, p) {
+                      $("#subscriptionBookModal #leftExperts").append("<option value='" + p.BookID + "' >" + p.BookInfo + "</option>");
+                        });
+                });
+
+               });
+
+
+
+
+      }
+
+
+      function selectedBooksID() //js函数返回值；
+      {
+          var bookArray = new Array();
+          $("#rightExperts > option").each(function () {
+              var value = $(this).val().toString();
+              bookArray.push(value);
+
+
+          });
+          return bookArray;
+        }
+
+
+
+
+     function showBookSubscription(semesterCourseID, semester, grade, major, course)
+     {
+         $("#courseBookInfoModal #courseBookInfoModalLabel").text(semester + grade + major + "专业" + "《" + course + "》课程" + "学生教材及教师用书征订信息");
+         $.get('/BookSubscription/GetSemesterCourseBookInfo/', { semesterCourseID: semesterCourseID }).success(function (data) {
+             $("#courseBookInfoModal #courseBookInfoPreview").html(data);
+         });
+
+         $("#courseBookInfoModal").modal('show');
+
+     }
+
+    </script>
+
+}

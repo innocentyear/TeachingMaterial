@@ -1,0 +1,35 @@
+﻿@model TeachingMaterial.Models.GradeMajorViewModel
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.GradeMajorID)
+
+        <div class="form-group">
+            <label for="GradeID" class="control-label col-md-2">年级</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GradeID", Model.GradesList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="MajorID" class="control-label col-md-2">专业</label>
+            <div class="col-md-10">
+              @Html.DropDownList("MajorID", Model.MajorsList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.GradeMajorIsValidate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.GradeMajorIsValidate, true) 有效
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.GradeMajorIsValidate, false) 无效
+                </label>  
+                @Html.ValidationMessageFor(model => model.GradeMajorIsValidate, "", new { @class = "text-danger" })
+                
+            </div>
+        </div>
+
+  @Scripts.Render("~/bundles/jqueryval")

@@ -1,0 +1,220 @@
+﻿@model  PagedList.IPagedList<TeachingMaterial.Models.SemesterCourse>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "学期课程管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" @*data-target="#majorModal"*@ id="triggerModal-btn" onclick="updateSemesterCourse(null,'create')">新建学期课程</button>
+
+@using (Html.BeginForm("Index", "SemesterCourse", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <label for="pageSize" class="control-label">每页指定记录数：</label>
+    <div class="form-group">
+        <input type="number" name="pageSize" value="@ViewBag.pageSize" class="form-control" size="1" maxlength="4" min="1" max="1000" /> @* 使用新的Html5标签 <input type="number">*@
+        @* @Html.TextBox("pageSize", ViewBag.pageSize as string, htmlAttributes: new { @class = "form-control", size = "1", maxlength = "2" })*@
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="semesterID" class="control-label">学期：</label>
+    <div class="form-group">
+        @Html.DropDownList("semesterID", ViewBag.semesterSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="gradeID" class="control-label">年级：</label>
+    <div class="form-group">
+        @Html.DropDownList("gradeID", ViewBag.gradeSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="departmentID" class="control-label">部门：</label>
+    <div class="form-group">
+        @Html.DropDownList("departmentID", ViewBag.departmentSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control", id = "indexDepartment" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="majorID" class="control-label">专业：</label>
+    <div class="form-group">
+        @Html.DropDownList("majorID", ViewBag.majorSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control", id = "indexMajor" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="courseType" class="control-label">课程类型：</label>
+    <div class="form-group">
+        @Html.DropDownList("courseType", ViewBag.courseTypeList as SelectList, "全部", htmlAttributes: new { @class = "form-control"})
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <br /><br />
+
+    <label for="courseName" class="control-label">通过课程名称查找：</label>
+    <div class="form-group">
+        @Html.TextBox("courseName", ViewBag.CourseName as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入课程名称" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+
+    <input type="submit" value="确定" class="btn btn-primary" />
+}
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>
+              @Html.ActionLink("学期", "Index", new { sortOrder = ViewBag.SemesterIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+              @Html.ActionLink("年级", "Index", new { sortOrder = ViewBag.GradeIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("部门名称", "Index", new { sortOrder = ViewBag.DeparmentIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("专业名称", "Index", new { sortOrder = ViewBag.MajorIDSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("课程代码", "Index", new { sortOrder = ViewBag.CourseNumberSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("课程名称", "Index", new { sortOrder = ViewBag.CourseNameSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("课程类型", "Index", new { sortOrder = ViewBag.CourseTypeSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("更改教师", "Index", new { sortOrder = ViewBag.ModifyUserSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("更改时间", "Index", new { sortOrder = ViewBag.ModifyTimeSortParam, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize })
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Semester.SemesterName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GradeMajor.Grade.GradeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GradeMajor.Major.Department.DepartmentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GradeMajor.Major.MajorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SemesterCourseNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SemesterCourseName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CourseType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostTime)
+                </td>
+                <td>
+                    @* @Html.ActionLink("Edit", "Edit", new { id=item.SemesterCourseID }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.SemesterCourseID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.SemesterCourseID })*@
+                    <a href="javascript:updateSemesterCourse('@item.SemesterCourseID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+                    <a href="javascript:updateSemesterCourse('@item.SemesterCourseID', 'delete')">删除</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td class="text-muted" colspan="12">
+                你当前选中了 <span id="selectedCount"></span> 条记录，每页 @Model.PageSize 条记录，共有 @Model.TotalItemCount 条记录。第 @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) 页，共 @Model.PageCount 页。
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, semesterID = ViewBag.SemesterID, gradeID = ViewBag.gradeID, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, courseType = ViewBag.CourseType, courseName = ViewBag.CourseName, pageSize = ViewBag.pageSize }),
+                               new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 5, DisplayItemSliceAndTotal = false }
+)
+
+
+@{ Html.RenderPartial("_Modal");} @*模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+
+@section Scripts{
+  <script>
+      $(function () {
+          //由于Get形式的查询表单IPagedList<>的模型也引用的是 领域模型而筛选ID为整型，不可以空，因此，表单提交的时候执行非侵入式验证会，传递为“全部”的筛选值，id会为空，默认阻止提交。
+          //虽然执行这段代码会取消表单对 ID空值的验证，表单能正确提交，但是chorome会报错。
+          @* $("form").removeData("validator").removeData("unobtrusiveValidation"); *@
+
+          //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+          $("#modal").on("click", "#operate-btn", function () {
+              $("#modalForm").submit();
+
+          });
+
+           $("#indexDepartment").change(function () {
+                  var selectedDepartmentId = $("#indexDepartment").val();
+                    $.getJSON('@Url.Action("GetMajorList")', { departmentID: selectedDepartmentId }).success(function (data) {
+                        $("#indexMajor").empty();
+                        $("#indexMajor").append("<option value=''>全部</option>");
+                        $.each(data, function (i, p) {
+                            $("#indexMajor").append("<option value='" + p.majorID + "' >" + p.majorName + "</option>");
+                        });
+                    });
+
+            });
+
+
+
+
+      })
+
+
+
+
+      function updateSemesterCourse(id, action) {
+          var currentId = id;
+          var path;
+          switch (action) {
+              case 'create':
+                  $("#modal #modalLabel").text("新建学期课程（可批量新建）");
+                  $("#modal #operate-btn").text("确认新建");
+                  path = "/SemesterCourse/create/" + currentId; //jquery接将路径；使用+号；
+                  $("#modal #modalForm").attr('action', path);
+                  break;
+              case 'edit':
+                  $("#modal #modalLabel").text("编辑一门学期课程");
+                  $("#modal #operate-btn").text("确认修改");
+                  path = "/SemesterCourse/Edit/" + currentId;
+                  $("#modal #modalForm").attr('action', path);
+                  break;
+              case 'delete':
+                  $("#modal #modalLabel").text("删除一门学期课程");
+                  $("#modal #operate-btn").text("确认删除");
+                  path = "/SemesterCourse/Delete/" + currentId;
+                  $("#modal #modalForm").attr('action', path);
+                  break;
+              default:
+                  console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+          }
+
+          $.get("/SemesterCourse/GetASemesterCourse", { id: currentId }).success(function (data) {
+              $("#modal #modalFormPlaceHolder").html(data); //ajax加载的数据，必须在数据加载后的回调函数中的加载数据后，立即使用重新定义验证规则，以施加表单重新验证。
+              $("form").removeData("validator").removeData("unobtrusiveValidation"); // 这两行js代码增加对 模态框分部视图 验证的支持。原来页面渲染的时候已经验证过了，所有不验证了。加上这两行，就删除了原来的验证，加上新的验证。
+              $.validator.unobtrusive.parse($("form"));
+          });
+
+          $("#modal").modal('show');
+
+      }
+
+    </script>
+    
+    }

@@ -1,0 +1,49 @@
+﻿@model TeachingMaterial.Models.SchoolClassViewModel
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.SchoolClassID)
+
+        
+
+          <div class="form-group">
+            <label for="GradeID" class="control-label col-md-2">年级</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GradeID", Model.GradesList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="MajorID" class="control-label col-md-2">专业</label>
+            <div class="col-md-10">
+              @Html.DropDownList("MajorID", Model.MajorsList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+         <div class="form-group">
+            @Html.LabelFor(model => model.SchoolClassNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SchoolClassNumber, new { htmlAttributes = new { @class = "form-control" } })<span class="help-block">班级代码8-10位，与信息平台一致</span>
+                @Html.ValidationMessageFor(model => model.SchoolClassNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SchoolClassName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SchoolClassName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SchoolClassName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StudentNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StudentNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StudentNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        
+
+@Scripts.Render("~/bundles/jqueryval")  @*将非侵入式验证文件加在表单的分部视图中，既可以加提交的Post表单中添加验证，又避免了Index视图的get 查询方法中，表单int类型外键提交验证的错误。*@

@@ -1,0 +1,98 @@
+﻿@model IEnumerable<TeachingMaterial.Models.BookType>
+
+@{
+    ViewBag.Title = "教材类别管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" @*data-target="#majorModal"*@ id="triggerModal-btn" onclick="updateBookType(null,'create')">新建教材类别</button>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model =>model.BookTypeID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BookTypeName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem =>item.BookTypeID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookTypeName)
+                </td>
+                <td>
+                    <a href="javascript:updateBookType('@item.BookTypeID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+                    <a href="javascript:updateBookType('@item.BookTypeID', 'delete')">删除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{ Html.RenderPartial("_Modal");} @*模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#modal").on("click", "#operate-btn", function () {
+                $("#modalForm").submit();
+
+            });
+
+
+        });
+
+
+        function updateBookType(id, action) {
+            var currentId = id;
+            var path;
+            switch (action) {
+                case 'create':
+                    $("#modal #modalLabel").text("新建教材类别");
+                    $("#modal #operate-btn").text("确认新建");
+                    path = "/BookType/create/" + currentId; //jquery接将路径；使用+号；
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'edit':
+                    $("#modal #modalLabel").text("编辑教材类别");
+                    $("#modal #operate-btn").text("确认修改");
+                    path = "/BookType/Edit/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'delete':
+                    $("#modal #modalLabel").text("删除教材类别");
+                    $("#modal #operate-btn").text("确认删除");
+                    path = "/BookType/Delete/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                default:
+                    console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+            }
+
+            $.get("/BookType/GetABookType", { id: currentId }).success(function (data) {
+                $("#modal #modalFormPlaceHolder").html(data); //ajax加载的数据，必须在数据加载后的回调函数中的加载数据后，立即使用重新定义验证规则，以施加表单重新验证。
+                $("form").removeData("validator").removeData("unobtrusiveValidation"); // 这两行js代码增加对 模态框分部视图 验证的支持。原来页面渲染的时候已经验证过了，所有不验证了。加上这两行，就删除了原来的验证，加上新的验证。
+                $.validator.unobtrusive.parse($("form"));
+            });
+
+            $("#modal").modal('show');
+
+        }
+
+
+
+
+    </script>
+
+    }

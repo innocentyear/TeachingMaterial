@@ -1,0 +1,111 @@
+﻿@model TeachingMaterial.Models.Notice
+
+@{
+    ViewBag.Title = "编辑公告";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.NoticeID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NoticeTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NoticeTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NoticeTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Content)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AuthorName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AuthorName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AuthorName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PostTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PostTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PostTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NoticeIsShow, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    <div class="radio-inline">
+                        <label>
+                            @Html.RadioButtonFor(model => model.NoticeIsShow, true) 显示
+                        </label>
+                    </div>
+
+                    <div class="radio-inline">
+                        <label>
+                            @Html.RadioButtonFor(model => model.NoticeIsShow, false) 不显示
+                        </label>
+                    </div>
+                </div>
+
+                @* @Html.EditorFor(model => model.NoticeIsShow) *@
+                @Html.ValidationMessageFor(model => model.NoticeIsShow, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PriorOrder, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PriorOrder, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PriorOrder, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClickCount, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ClickCount, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ClickCount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("返回公告列表", "Index")
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval", "~/Content/ueditor/ueditor.config.js", "~/Content/ueditor/ueditor.all.js")
+    <script type="text/javascript">
+        var editor = new baidu.editor.ui.Editor({
+            UEDITOR_HOME_URL: '/Content/ueditor/',//配置编辑器路径，也可以在ueditor.config.js中配置。
+            iframeCssUrl: '/Content/ueditor/themes/iframe.css',//样式路径
+            autoHeightEnabled: true,//高度自动增长
+            initialFrameHeight: 200 //配置编辑器初始高度为400px
+        });
+        editor.render('Content'); //将编辑器装入 ID=Content 的文本域中。
+    </script>
+}

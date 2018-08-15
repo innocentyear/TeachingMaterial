@@ -1,0 +1,78 @@
+﻿@model TeachingMaterial.Models.Semester
+
+@using (Html.BeginForm("Edit","Semester",FormMethod.Post,htmlAttributes:new { id="semesterForm"}))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+       @Html.HiddenFor(model => model.SemesterID)
+       @* <input type="hidden" value="@Model.SemesterID" name="id" /> *@ @* 在编辑和删除情况下，由基架自动生成的action和View中 会自动在表单标签的action 属性中生成controller/action/id 的值，默认是此视图的路由值，从而正确提交。但是换成了模态框，不存在了Get 方式的控制器了，因此，hiddenfor 辅助方法生成的name =CategoryID 与默认控制器接收的参数id的值不匹配，会找不到id值。*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.SemesterName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SemesterName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SemesterName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDateOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDateOfSubscription, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StartDateOfSubscription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OverDateOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OverDateOfSubscription, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OverDateOfSubscription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SwitchOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.SwitchOfSubscription, true) 打开
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.SwitchOfSubscription, false) 关闭
+                </label>
+                @Html.ValidationMessageFor(model => model.SwitchOfSubscription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsCurrentSemester, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.IsCurrentSemester, true) 当前征订学期
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.IsCurrentSemester, false) 非当前征订学期
+                </label>
+                @Html.ValidationMessageFor(model => model.IsCurrentSemester, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+        *@
+    </div>
+}
+
+@*
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+*@

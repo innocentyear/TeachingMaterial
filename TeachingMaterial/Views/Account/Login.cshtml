@@ -1,0 +1,121 @@
+﻿@{
+    Layout = null;
+}
+@using TeachingMaterial.Models;
+@model LoginViewModel
+@{
+    ViewBag.Title = "登录";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录-教材征订系统</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body style="padding-top:0px">
+    <div class="well well-sm">
+        <img src="~/Content/Images/ybzylogo.jpg" class="img-circle" /><span class="lead"> <strong>宜宾职业技术学院教材征订系统</strong></span>
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+             @{Html.RenderAction("LoginNoticeList", "Notice");}
+
+            </div>
+
+
+            <div class="col-md-5">
+                <section id="loginForm">
+                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h2 class="panel-title"><span class="glyphicon glyphicon-log-in"> 用户登录</span></h2>
+                            </div>
+                            <div class="panel-body">
+                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "请输入用户账号名称如 user", })
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "请输入密码" })
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <div class="checkbox">
+                                            @Html.CheckBoxFor(m => m.RememberMe)
+                                            @Html.LabelFor(m => m.RememberMe)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="登录" class="btn btn-primary" />
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                        @* <p>
+                                @Html.ActionLink("注册为新用户", "Register")
+                            </p>*@
+                        @* 在为密码重置功能启用帐户确认后启用此项
+                            <p>
+                                @Html.ActionLink("忘记了密码?", "ForgotPassword")
+                            </p>*@
+                    }
+                </section>
+
+            </div> @* 登录框完*@
+
+
+
+
+        </div>
+    </div>
+
+
+    <div class="body-content container-fluid">
+        <hr />
+        <footer class="text-center">
+            <p>&copy; 宜宾职业技术学院教务处 @DateTime.Now.Year - 教材征订系统 （建议使用谷歌浏览器访问）</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+
+</body>
+</html>
+
+@*<h2>@ViewBag.Title。</h2>
+    <div class="row">
+        <div class="col-md-8">
+
+        </div>
+        <div class="col-md-4">
+            <section id="socialLoginForm">
+                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </div>
+    </div>
+*@

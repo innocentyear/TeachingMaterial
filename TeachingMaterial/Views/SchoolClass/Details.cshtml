@@ -1,0 +1,50 @@
+﻿@model TeachingMaterial.Models.SchoolClass
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SchoolClass</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GradeMajor.GradeMajorID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GradeMajor.GradeMajorID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SchoolClassNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SchoolClassNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SchoolClassName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SchoolClassName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StudentNumber)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SchoolClassID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

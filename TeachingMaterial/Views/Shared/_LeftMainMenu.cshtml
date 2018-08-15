@@ -1,0 +1,151 @@
+﻿
+<div class="panel-group" id="leftMemu" style="background-color:#0094ff">
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h2 class="panel-title">
+                <a href="@Url.Action("Index","Home")"><span class="glyphicon glyphicon-dashboard"> 教材征订系统</span></a>
+            </h2>
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#verifyData" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon glyphicon-th-large"> 基础数据核对</span></a>
+            </h4>
+        </div>
+
+        <div id="verifyData" class="panel-collapse collapse in list-group">
+            <a href="@Url.Action("Index","VerifySchoolClass")" class="list-group-item">班级及人数核对</a>
+            <a href="@Url.Action("Index","VerifyGradeMajor")" class="list-group-item">年级专业人数核对</a>
+            <a href="@Url.Action("Index","VerifySemesterCourse")" class="list-group-item">学期课程开设核对</a>
+            <a href="@Url.Action("Index","VerifyBook")" class="list-group-item">教材目录核对</a>
+        </div>
+
+    </div>
+
+
+    @if (User.IsInRole("DepartmentSpecialManager"))
+    {
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a href="#basicSet" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon glyphicon-th-list"> 基本设置</span></a>
+                </h4>
+            </div>
+
+            <div id="basicSet" class="panel-collapse collapse in list-group">
+                <a href="@Url.Action("Index","SchoolClassForDepartment")" class="list-group-item">班级设置</a>
+                <a href="@Url.Action("Index","SemesterCourseForDepartment")" class="list-group-item">课程开设设置</a>
+            </div>
+
+        </div>
+    }
+
+
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#TeachingMaterialSubscription" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon  glyphicon-book"> 教材征订</span></a>
+            </h4>
+        </div>
+
+        <div id="TeachingMaterialSubscription" class="panel-collapse collapse in list-group">
+            <a href="@Url.Action("NoticeList","Notice")" class="list-group-item">查看公告</a>
+            <a href="@Url.Action("Index","BookSubscriptionForDepartment")" class="list-group-item">选用教材</a>
+            <a href="@Url.Action("Index","Order")" class="list-group-item">查看订单</a>
+        </div>
+
+    </div>
+
+
+
+    @if (User.IsInRole("SuperAdministrator"))
+    {
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#leftmenu" href="#systemManagement"><span class="glyphicon glyphicon-asterisk"> 系统管理</span></a>
+                </h4>
+            </div>
+            <div id="systemManagement" class="list-group panel-collapse collapse in">
+                @*直接将listgroup 写在此div里面而不新建一个div的目的是两者显得连续 不留空。  *@
+                @*不使用胶囊式导航条了。换成使用列表组。
+                     <div class="panel-body">  如果没有panel-body 那么它下面的元素就直接上去了，包括表格或是列表组的选项。
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><a href="@Url.Action("Index","Category")"><span class="glyphicon glyphicon-th-large"> 评审类别</span></a></li>
+                            <li><a href="@Url.Action("Index","ReviewIndexItem")"><span class="glyphicon glyphicon-th"> 评审指标</span></a></li>
+                            <li><a href="@Url.Action("Index","ReviewIndexSystem")"><span class="glyphicon glyphicon-th-list"> 评审体系</span></a></li>
+                        </ul>
+                    </div>
+                *@
+                <a href="@Url.Action("Index","Semester")" class="list-group-item">学期管理</a>
+                <a href="@Url.Action("Index","Department")" class="list-group-item">部门管理</a>
+                <a href="@Url.Action("Index","Major")" class="list-group-item">专业管理</a>
+                <a href="@Url.Action("Index","Grade")" class="list-group-item">年级管理</a>
+                <a href="@Url.Action("Index","GradeMajor")" class="list-group-item">年级专业管理</a>
+                <a href="@Url.Action("Index","SchoolClass")" class="list-group-item">班级管理</a>
+                <a href="@Url.Action("Index","SemesterCourse")" class="list-group-item">课程开设管理</a>
+                <a href="@Url.Action("Index","BookType")" class="list-group-item">教材类别管理</a>
+                <a href="@Url.Action("Index","Book")" class="list-group-item">教材管理</a>
+                <a href="@Url.Action("Index","BookSubscription")" class="list-group-item">教材征订管理</a>
+            </div>
+        </div>
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a href="#orderConfiguration" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon glyphicon-info-sign"> 订单管理</span></a>
+                </h4>
+            </div>
+
+            <div id="#orderConfiguration" class="panel-collapse collapse in list-group">
+                <a href="@Url.Action("Index","OriginBookOrder")" class="list-group-item">原始订单查看</a>
+                <a href="@Url.Action("Index","SchoolClassBookOrder")" class="list-group-item">班级学生教材订单管理</a>
+                <a href="@Url.Action("Index","TeacherBookOrder")" class="list-group-item">教师用书订单管理</a>
+                <a href="@Url.Action("Index","BookSellerBookOrder")" class="list-group-item">教材商订单查看</a>
+            </div>
+        </div>
+        
+
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a href="#noticeConfiguration" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon glyphicon-info-sign"> 公告管理</span></a>
+                </h4>
+            </div>
+
+            <div id="noticeConfiguration" class="panel-collapse collapse in list-group">
+                <a href="@Url.Action("Index","Notice")" class="list-group-item">公告管理</a>
+                <a href="@Url.Action("Create","Notice")" class="list-group-item">发布公告</a>
+            </div>
+        </div>
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a href="#userConfiguration" data-toggle="collapse" data-parent="#leftmenu"><span class="glyphicon glyphicon-user"> 用户管理</span></a>
+                </h4>
+            </div>
+
+            <div id="userConfiguration" class="panel-collapse collapse in list-group">
+                <a href="@Url.Action("Index","Account")" class="list-group-item">用户管理</a>
+                <a href="@Url.Action("Index", "RoleAdmin")" class="list-group-item">角色管理</a>
+            </div>
+        </div>
+
+
+
+
+    }
+
+
+
+
+</div>

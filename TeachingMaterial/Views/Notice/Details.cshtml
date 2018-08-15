@@ -1,0 +1,27 @@
+﻿@model TeachingMaterial.Models.Notice
+
+@{
+    ViewBag.Title = "显示公告";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h2 class="text-center">@Html.DisplayFor(model => model.NoticeTitle) </h2>
+        </div>
+        <p class="text-center">
+            @Html.DisplayFor(model => model.PostTime) @Html.DisplayNameFor(model => model.AuthorName) @Html.DisplayFor(model => model.AuthorName) @Html.DisplayNameFor(model => model.ClickCount) @Html.DisplayFor(model => model.ClickCount)
+        </p>
+        <p class="text-center">
+            @Html.Raw(Model.Content)
+        </p>
+    </div>
+</div>
+
+<p>
+    @Html.ActionLink("编辑", "Edit", new { id = Model.NoticeID }) |
+    @Html.ActionLink("返回公告列表", "Index")
+</p>

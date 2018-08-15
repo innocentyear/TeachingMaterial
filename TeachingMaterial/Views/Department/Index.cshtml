@@ -1,0 +1,254 @@
+﻿@model IEnumerable<TeachingMaterial.Models.Department>
+
+@{
+    ViewBag.Title = "部门管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" data-target="#departmentModal" id="triggerModal-btn">新建部门</button>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+               部门ID
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DepartmentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DepartmentLocation)
+            </th>
+            <th>
+                院系征订人员
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+   
+
+@foreach (var item in Model) {
+   <tbody>
+       <tr>
+           <td>
+               @Html.DisplayFor(modelItem => item.DepartmentID)
+           </td>
+           <td>
+               @Html.DisplayFor(modelItem => item.DepartmentName)
+           </td>
+           <td>
+               @Html.DisplayFor(modelItem => item.DepartmentLocation)
+           </td>
+           <td>
+               @if (item.Administrators != null)
+               {
+                   foreach (var administrator in item.Administrators)
+                   {
+                    <text> @administrator.RealName |</text>
+                   }
+               }
+           </td>
+           <td>
+              @* @Html.ActionLink("编辑", "Edit", new { id = item.DepartmentID }) |*@
+               <a href="javascript:updateDepartment('@item.DepartmentID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+              @*@Html.ActionLink("删除", "Delete", new { id = item.DepartmentID })*@ 
+               <a href="javascript:updateDepartment('@item.DepartmentID', 'delete')">删除</a> |
+               <a href="javascript:updateDepartment('@item.DepartmentID', 'specifyAdministrators')">指定征订人员</a>
+           </td>
+       </tr>
+
+   </tbody>
+
+}
+
+</table>
+
+
+@{ Html.RenderPartial("_Department.Modal");} @*模态框 在视图层级中越往外层越好。*@
+@{ Html.RenderPartial("_SpecifiedAdministrator.Modal");}  @*指定院系征订人员*@
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            $("#triggerModal-btn").click(function () {
+                $("#departmentModal #departmentModalLabel").text("新建部门");
+                $("#departmentModal #operateDepartment-btn").text("新建");
+                $("#departmentModal #departmentPreview").load('@Url.Action("GetEmptyDepartment")', null, function ()
+                {
+                    $("form").removeData("validator").removeData("unobtrusiveValidation");
+                    $.validator.unobtrusive.parse($("form"));
+                }); //先弹出模态框，再Ajax加载内容。
+
+
+            });
+
+
+
+
+            $("#specifiedExpertsModal #btn_addItems").click(function () {
+                var items = $("#specifiedExpertsModal #leftExperts option:selected");
+                items.clone().appendTo("#specifiedExpertsModal #rightExperts");
+                items.remove();
+
+            });
+
+            $("#specifiedExpertsModal #btn_subItems").click(function () {
+                var items = $("#specifiedExpertsModal #rightExperts option:selected");
+                items.clone().appendTo("#specifiedExpertsModal #leftExperts");
+                items.remove();
+
+            });
+
+
+            //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+            //用于提交编辑和删除模态框
+            $("#departmentModal").on("click", "#operateDepartment-btn", function () {
+
+                $("#departmentModal #departmentForm").submit();
+            });
+
+            @* 由于表单值是以Ajax形式直接返回的，所以不成功。
+            $("#specifiedExpertsModal").on("click", "#specifiedExperts-btn", function () {
+
+                $("#specifiedExpertsModal #specifyAministratorForm").submit();
+
+                });*@
+
+
+
+        });
+
+        function updateDepartment(id, action)
+        {
+            var currentId = id;
+
+            switch (action)
+            {
+                case 'edit':
+                    $.post("/Department/GetEditDepartment", { id: currentId }).success(function (data) {
+                        $("#departmentModal #departmentPreview").html(data);   //使用ajax返回的数据使用 jquery的html()获得的数据，只能读取，不能更改。
+                        $("form").removeData("validator").removeData("unobtrusiveValidation"); // 这两行js代码增加对 模态框分部视图 验证的支持。原来页面渲染的时候已经验证过了，所有不验证了。加上这两行，就删除了原来的验证，加上新的验证。
+                        $.validator.unobtrusive.parse($("form"));
+                    });
+                    $("#departmentModal #departmentModalLabel").text("编辑部门");
+                    $("#departmentModal #operateDepartment-btn").text("确认修改");
+                    // $("#categoryForm").attr('action', '@Url.Action("Edit")'); //在javascript 中 只能使用控制器操作方法的如 @* @Url.Action("Delete") ，而不能使用带路由值的Url方法，如@Url.Action("Delete", new { id = currentId })。*@
+                   //使用attr 属性与设置的值必须加引号，单引号或双引号都可以。
+                   // $("#categoryForm").attr('action', '/Category/Edit' + currentId);
+                   $("#departmentModal").modal('show');
+                    break;
+                case 'delete':
+                    $.post("/Department/GetDeleteDepartment", { id: currentId }).success(function (data) {
+                       $("#departmentModal #departmentPreview").html(data);  //使用ajax返回的数据使用 jquery的html()获得的数据，只能读取，不能更改。
+                       
+                   });
+                   $("#departmentModal #departmentModalLabel").text("删除部门");
+                   $("#departmentModal #operateDepartment-btn").text("确认删除");
+                   // $("#categoryForm").attr('action', '@Url.Action("Delete")');
+                   $("#departmentModal").modal('show');
+                   /*
+                    $("#categoryModal #operateCategory-btn").click(function () {
+                    $("#categoryModal #CategoryForm").submit();
+                   });
+                  */
+
+                   break;
+                case 'specifyAdministrators':
+
+                    //初始化指定部门人员模态框
+                    initializeSpecifyAdministratorModal(id);
+
+                    $("#specifiedExpertsModal").modal('show');
+
+                    //利用ajax方式的提交，由于表单提交不成功。
+
+                    $("#specifiedExpertsModal #specifiedExperts-btn").click(function () {
+                        $("#specifiedExpertsModal").modal('hide');
+                        var chooseAdminIDs = selectedAdministratorsID();
+                        $.post("Department/SpecifyAministrators", { departmentID: id, chooseAdministratorsID: chooseAdminIDs }, function (data) {
+                            alert(data + "个征订人员更改");
+
+                            location.href = location.href;
+
+                        });
+                    });
+
+
+                    break;
+            default:
+                console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+
+
+            }
+        }
+
+
+
+        function initializeSpecifyAdministratorModal(id)
+        {
+            var manageDepartmentId = id;
+            
+           // $hidden = $("<input type='hidden'  name='departmentID' value ='" + id + "' /> ");//如果遇到 拼接html多引号的情况，先在单引号内输入一对双引号，再在双引号内输入一对+号。
+
+           // $("#specifiedExpertsModal #hiddenDepartmentID").append($hidden); //增加隐藏框；
+
+            $("#specifiedExpertsModal #departmentID").empty();//清空部门下拉框
+                $("#specifiedExpertsModal #departmentID").append("<option value='" + '' + "'>" + "全部部门" + "</option>")
+                $.getJSON('@Url.Action("GetDepartmentList")').success(function (data) {
+                    $.each(data, function (i, p) {
+                        $("#specifiedExpertsModal #departmentID").append("<option value='" + p.DepartmentID + "'>" + p.DepartmentName + "</option>");
+                    });
+                });
+               // $("#specifiedExpertsModal").modal('show');
+
+                $.getJSON('@Url.Action("GetAdministratorList")', { manageDepartmentID: manageDepartmentId }).success(function (data) {
+                    $("#specifiedExpertsModal #leftExperts").empty(); //清空征订人员列表框
+                        $.each(data, function (i, p) {
+                            $("#specifiedExpertsModal #leftExperts").append("<option value='" + p.Id + "' >" + p.RealName + "</option>");
+                        });
+                });
+
+
+               $.getJSON('@Url.Action("GetExistingAdministratorList")', { manageDepartmentID: manageDepartmentId }).success(function (data) {
+                   $("#specifiedExpertsModal #rightExperts").empty(); //清空选择人员列表框
+                        $.each(data, function (i, p) {
+                            $("#specifiedExpertsModal #rightExperts").append("<option value='" + p.Id + "' >" + p.RealName + "</option>");
+                        });
+                });
+
+
+
+
+             $("#specifiedExpertsModal #departmentID").change(function () {
+                    var selectedDepartmentId = $("#specifiedExpertsModal #departmentID").val();
+                    $.getJSON('@Url.Action("GetAdministratorList")', { departmentID: selectedDepartmentId, manageDepartmentID: manageDepartmentId }).success(function (data) {
+                        $("#specifiedExpertsModal #leftExperts").empty();
+                        $.each(data, function (i, p) {
+                            $("#specifiedExpertsModal #leftExperts").append("<option value='" + p.Id + "' >" + p.RealName + "</option>");
+                        });
+                    });
+
+               });
+            
+
+
+
+        }
+
+        function selectedAdministratorsID() //js函数返回值；
+        {
+            var valueArray = new Array();
+            $("#rightExperts > option").each(function () {
+                var value = $(this).val().toString();
+                valueArray.push(value);
+
+               
+            });
+            return valueArray;
+        }
+
+    </script>
+
+}

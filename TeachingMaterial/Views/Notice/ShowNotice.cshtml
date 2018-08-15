@@ -1,0 +1,23 @@
+﻿@model TeachingMaterial.Models.Notice
+@{
+    ViewBag.Title = "通知公告内容";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<div>
+    <h3 class="text-center">@Html.DisplayFor(model => model.NoticeTitle)</h3>
+    <hr />
+    <p class="text-center">
+        @Html.DisplayFor(model => model.PostTime) @Html.DisplayNameFor(model => model.AuthorName) @Html.DisplayFor(model => model.AuthorName) @Html.DisplayNameFor(model => model.ClickCount) @Html.DisplayFor(model => model.ClickCount)
+    </p>
+    <p class="text-center">
+        @Html.Raw(Model.Content)
+    </p>
+
+</div>
+
+<p>
+    @Html.ActionLink("返回公告列表", "NoticeList")
+</p>

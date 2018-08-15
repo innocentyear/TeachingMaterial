@@ -1,0 +1,16 @@
+﻿@model TeachingMaterial.Models.BookType
+
+@Html.AntiForgeryToken()
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+@Html.HiddenFor(model => model.BookTypeID)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.BookTypeName, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.BookTypeName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.BookTypeName, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")  @*将非侵入式验证文件加在表单的分部视图中，既可以加提交的Post表单中添加验证，又避免了Index视图的get 查询方法中，表单int类型外键提交验证的错误。*@

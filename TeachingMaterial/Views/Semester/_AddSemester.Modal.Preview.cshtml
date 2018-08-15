@@ -1,0 +1,88 @@
+﻿@model TeachingMaterial.Models.Semester
+
+<!-- Form标签中的id大小写敏感，id =SemesterForm 会导致jquery无响应 -->
+@using (Html.BeginForm("Create", "Semester", FormMethod.Post, htmlAttributes: new { id ="semesterForm"}))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.SemesterName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SemesterName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SemesterName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDateOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDateOfSubscription, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StartDateOfSubscription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OverDateOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OverDateOfSubscription, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OverDateOfSubscription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SwitchOfSubscription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model =>model.SwitchOfSubscription,true) 打开
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model =>model.SwitchOfSubscription,false) 关闭
+                </label>
+                @Html.ValidationMessageFor(model => model.SwitchOfSubscription, "", new { @class = "text-danger" })
+               @*
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.SwitchOfSubscription)
+                    @Html.ValidationMessageFor(model => model.SwitchOfSubscription, "", new { @class = "text-danger" })
+                </div>
+                   *@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsCurrentSemester, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model =>model.IsCurrentSemester, true) 当前征订学期
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.IsCurrentSemester, false) 非当前征订学期
+                </label>
+                @Html.ValidationMessageFor(model => model.IsCurrentSemester, "", new { @class = "text-danger" })
+                @*
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.SemesterIsValidate)
+                    @Html.ValidationMessageFor(model => model.SemesterIsValidate, "", new { @class = "text-danger" })
+                </div>*@
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>*@
+    </div>
+}
+
+    @*
+        <div>
+            @Html.ActionLink("返回", "Index")
+        </div>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+    *@

@@ -1,0 +1,283 @@
+﻿@model PagedList.IPagedList<TeachingMaterial.Models.GradeMajor>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "年级专业管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<button class="btn btn-primary" data-toggle="modal" @*data-target="#majorModal"*@ id="triggerModal-btn" onclick="updateGradeMajor(null,'create')">新建年级专业</button>
+<div class="btn-group pull-right">
+    <button class="btn btn-success" id="checkedValidate-btn">批量设定有效</button>
+    <button class="btn btn-warning" id="checkedNoValidate-btn">批量设定无效</button>
+</div>
+
+
+@using (Html.BeginForm("Index", "GradeMajor", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <label for="pageSize" class="control-label">每页指定记录数：</label>
+    <div class="form-group">
+        <input type="number" name="pageSize" value="@ViewBag.pageSize" class="form-control" size="1" maxlength="4" min="1" max="1000" /> @* 使用新的Html5标签 <input type="number">*@
+        @* @Html.TextBox("pageSize", ViewBag.pageSize as string, htmlAttributes: new { @class = "form-control", size = "1", maxlength = "2" })*@
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="departmentID" class="control-label">部门：</label>
+    <div class="form-group">
+        @Html.DropDownList("departmentID", ViewBag.departmentSelectList as SelectList,"全部",htmlAttributes:new { @class="form-control", id = "indexDepartment" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="majorID" class="control-label">专业：</label>
+    <div class="form-group">
+        @Html.DropDownList("majorID", ViewBag.majorSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control", id = "indexMajor" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="gradeID" class="control-label">年级：</label>
+    <div class="form-group">
+        @Html.DropDownList("gradeID", ViewBag.gradeSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="isValidate" class="control-label">是否有效：</label>
+    <div class="form-group">
+        @Html.DropDownList("isValidate", ViewBag.isValidateSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+   <text>&nbsp;&nbsp;</text>
+    <label for="majorName" class="control-label">专业名称：</label>
+    <div class="form-group">
+        @Html.TextBox("majorName", ViewBag.majorName as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入专业名称" })
+    </div>
+    <text>&nbsp;</text>
+    <input type="submit" value="确定" class="btn btn-primary" />
+}
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="allGradeMajor" id="allGradeMajor" />
+                </label>
+            </th>
+            <th>
+                @Html.ActionLink("年级专业ID", "Index", new { sortOrder = ViewBag.GradeMajorIDSortParam, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, gradeID = ViewBag.gradeID, isValidate = ViewBag.isValidate, majorName = ViewBag.majorName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+               部门名称
+            </th>
+            <th>
+                @Html.ActionLink("专业名称", "Index", new { sortOrder = ViewBag.MajorIDSortParam, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, gradeID = ViewBag.gradeID, isValidate = ViewBag.isValidate, majorName = ViewBag.majorName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("年级名称", "Index", new { sortOrder = ViewBag.GradeIDSortParam, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, gradeID = ViewBag.gradeID, isValidate = ViewBag.isValidate, majorName = ViewBag.majorName, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                学生人数
+            </th>
+            <th>
+                @Html.ActionLink("是否有效", "Index", new { sortOrder = ViewBag.IsValidateSortParam, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, gradeID = ViewBag.gradeID, isValidate = ViewBag.isValidate, majorName = ViewBag.majorName, pageSize = ViewBag.pageSize })
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="gradeMajor"  name="gradeMajor" value="@item.GradeMajorID" />
+                    </label>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GradeMajorID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Major.Department.DepartmentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Major.MajorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade.GradeName)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem =>item.GradeMajorStudentNumber)
+                </td>
+                <td>
+                    @(item.GradeMajorIsValidate ? "有效" : "")
+                </td>
+                <td>
+                    <a href="javascript:updateGradeMajor('@item.GradeMajorID', 'edit')">编辑</a> | @* item.CategoryID 必须加引号，因为它本身不是数字，而是字符，为string 类型*@
+                    <a href="javascript:updateGradeMajor('@item.GradeMajorID', 'delete')">删除</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td class="text-muted" colspan="12">
+                你当前选中了 <span id="selectedCount"></span> 条记录，每页 @Model.PageSize 条记录，共有 @Model.TotalItemCount 条记录。第 @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) 页，共 @Model.PageCount 页。
+            </td>
+        </tr>
+    </tfoot>
+
+</table>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, departmentID = ViewBag.departmentID, majorID = ViewBag.MajorID, gradeID = ViewBag.gradeID, isValidate = ViewBag.isValidate, majorName = ViewBag.majorName, pageSize = ViewBag.pageSize }),
+                               new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 5, DisplayItemSliceAndTotal = false }
+)
+
+@{ Html.RenderPartial("_Modal");} @*模态框 在视图层级中越往外层越好。*@  @* 此处模态框来自 views/share 目录下的公用模态框。也可以来自 控制器专属的 views目录下的特用的模态框*@
+@{ Html.RenderPartial("_BulkSetValidateConfirm.Modal");} @* 批量设置有效或无效模态框*@
+ @section Scripts{
+    @*@Scripts.Render("~/bundles/jqueryval")*@ @*不加载非侵入式验证文件，get形式的表单不需要验证，有验证还出 错。*@
+    <script>
+        $(function () {
+            @*本页面移除验证，不加这一行，表单是无法提交的，因为id值在模型里面是设置成int类型，自动执行非侵入式验证。*@
+            @* $("form").removeData("validator").removeData("unobtrusiveValidation");*@
+            //将父元素加载一个事件， 单击它的子元素后就执行。jquery中绑定事件的方法有bind,delegate等多种，但on方法是最新的，最好的。
+            $("#modal").on("click", "#operate-btn", function () {
+                $("#modalForm").submit();
+
+            });
+
+             $("#indexDepartment").change(function () {
+                var selectedDepartmentId = $("#indexDepartment").val();
+                $.getJSON('@Url.Action("GetMajorList")', { departmentID: selectedDepartmentId }).success(function (data) {
+                    $("#indexMajor").empty();
+                    $("#indexMajor").append("<option value=''>全部</option>");
+                    $.each(data, function (i, p) {
+                        $("#indexMajor").append("<option value='" + p.majorID + "' >" + p.majorName + "</option>");
+                    });
+                });
+
+            });
+
+
+            selectedGradeMajors(); //页面每次加载，都计算一次选中的复选框。
+
+            @*使用prop则完美实现复选框的全选和反选,又简洁 *@
+            $("#allGradeMajor").click(function () {
+                var isChecked = $(this).prop("checked");
+                $(".gradeMajor").prop("checked", isChecked);
+                selectedGradeMajors();
+            });
+            @*更改一个筛选框，都需要重新计算选中的所有复选框*@
+            $(".gradeMajor").click(function () {
+                selectedGradeMajors();
+            });
+
+            var modalTitle = $("#gradeMajorModal #gradeMajorModalLabel");
+            var modalBody = $("#gradeMajorModal #gradeMajorPreview");
+            var modalButton = $("#gradeMajorModal #confirmSet-btn");
+           //批量设置有效
+            $("#checkedValidate-btn").click(function () {
+                var selectedProjectsId = selectedGradeMajors();
+                if (selectedProjectsId.length == 0) {
+                    alert("请至少选择1条记录");
+                }
+                else {
+                    modalTitle.text("年级专业批量设置为有效");
+                    modalButton.text("确认设置有效");
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-prefix").text("你确认将");
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-content").html(selectedProjectsId.length);
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-suffix").html("条年级专业设置为有效吗？");
+                    $("#gradeMajorModal").modal('show');
+                    modalButton.click(function () {
+                        $.post("/GradeMajor/MakeMassValidate", { selectedIds: selectedProjectsId, expected: true }).success(function (data) {
+                            alert(data + "条记录成功设置为有效。");
+                            location.href = location.href;
+                        });
+                    });
+                }
+            });
+
+
+            $("#checkedNoValidate-btn").click(function () {
+                var selectedProjectsId = selectedGradeMajors();
+                if (selectedProjectsId.length == 0) {
+                    alert("请至少选择1条记录");
+                    return;
+
+                }
+                else {
+                    modalTitle.text("年级专业批量设置为无效");
+                    modalButton.text("确认设置无效");
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-prefix").text("你确认将");
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-content").html(selectedProjectsId.length);
+                    $("#gradeMajorModal #gradeMajorPreview #modalbody-suffix").html("条年级专业设置为无效吗？");
+                    $("#gradeMajorModal").modal('show');
+                    modalButton.click(function () {
+                        $.post("/GradeMajor//MakeMassValidate", { selectedIds: selectedProjectsId, expected: false }).success(function (data) {
+                            alert(data + "条记录成功设置为无效。");
+                            location.href = location.href;
+                        });
+                    });
+                }
+            });
+
+
+
+
+        });
+
+
+
+        function updateGradeMajor(id, action) {
+            var currentId = id;
+            var path;
+            switch (action) {
+                case 'create':
+                    $("#modal #modalLabel").text("新建年级专业");
+                    $("#modal #operate-btn").text("确认新建");
+                    path = "/gradeMajor/create/" + currentId; //jquery拼接路径；使用+号；
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'edit':
+                    $("#modal #modalLabel").text("编辑年级专业");
+                    $("#modal #operate-btn").text("确认修改");
+                    path = "/grademajor/Edit/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                case 'delete':
+                    $("#modal #modalLabel").text("删除年级专业");
+                    $("#modal #operate-btn").text("确认删除");
+                    path = "/grademajor/Delete/" + currentId;
+                    $("#modal #modalForm").attr('action', path);
+                    break;
+                default:
+                    console.debug('Unknown action ' + action); //写给浏览器调试用的，按F12键会在浏览器 控制台窗口显示信息。
+
+            }
+
+            $.get("/GradeMajor/GetAGradeMajor", { id: currentId }).success(function (data) {
+                $("#modal #modalFormPlaceHolder").html(data); //ajax加载的数据，必须在数据加载后的回调函数中的加载数据后，立即使用重新定义验证规则，以施加表单重新验证。
+                //$("form").removeData("validator").removeData("unobtrusiveValidation"); // 这两行js代码增加对 模态框分部视图 验证的支持。原来页面渲染的时候已经验证过了，所有不验证了。加上这两行，就删除了原来的验证，加上新的验证。
+                //$.validator.unobtrusive.parse($("form"));
+            });
+
+            $("#modal").modal('show');
+
+        }
+
+        //获取所有选中的复选框，放入数组中并返回
+        function selectedGradeMajors() {
+            var valueArray = new Array();
+            var checkedGradeMajors = $(".gradeMajor:checked");//获取选中的记录.
+            $(".gradeMajor:checked").each(function () {
+                var value = $(this).val().toString();
+                valueArray.push(value);
+            });
+
+            $("#selectedCount").text(checkedGradeMajors.length); //获取选中的记录， 选中的记录数
+            // $("#selectedCount").text($(".applicationProject:checked").length);//$(".applicationProject:checked")获取选中的记录， 选中的记录数
+            return valueArray;
+
+        }
+    </script>
+
+
+}

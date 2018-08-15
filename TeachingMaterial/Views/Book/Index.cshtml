@@ -1,0 +1,120 @@
+﻿@model PagedList.IPagedList<TeachingMaterial.Models.Book>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "教材管理";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("新增教材", "Create")
+</p>
+@using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <label for="pageSize" class="control-label">每页指定记录数：</label>
+    <div class="form-group">
+        <input type="number" name="pageSize" value="@ViewBag.pageSize" class="form-control" size="1" maxlength="4" min="1" max="1000" /> @* 使用新的Html5标签 <input type="number">*@
+        @* @Html.TextBox("pageSize", ViewBag.pageSize as string, htmlAttributes: new { @class = "form-control", size = "1", maxlength = "2" })*@
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    
+    <label for="bookName" class="control-label">通过教材名称或ISBN号查找：</label>
+    <div class="form-group">
+        @Html.TextBox("bookName", ViewBag.BookName as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入教材名称或ISBN号" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+
+    <label for="authorName" class="control-label">通过作者查找：</label>
+    <div class="form-group">
+        @Html.TextBox("authorName", ViewBag.AuthorName as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入作者姓名" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+
+    <label for="bookTypeID" class="control-label">教材类别：</label>
+    <div class="form-group">
+        @Html.DropDownList("bookTypeID", ViewBag.bookTypeSelectList as SelectList, "全部", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+
+    <input type="submit" value="确定" class="btn btn-primary" />
+}
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.ActionLink("教材ID", "Index", new { sortOrder = ViewBag.BookIDSortParam, bookName = ViewBag.BookName, authorName = ViewBag.AuthorName, bookTypeID = ViewBag.BookTypeID, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("教材名称", "Index", new { sortOrder = ViewBag.BookNameSortParam,  bookName = ViewBag.BookName , authorName=ViewBag.AuthorName, bookTypeID=ViewBag.BookTypeID , pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                作者姓名
+            </th>
+            <th>
+               ISBN
+            </th>
+            <th>
+               出版社
+            </th>
+            <th>
+                @Html.ActionLink("出版日期", "Index", new { sortOrder = ViewBag.PublishingDateSortParam, bookName = ViewBag.BookName, authorName = ViewBag.AuthorName, bookTypeID = ViewBag.BookTypeID, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+                @Html.ActionLink("定价", "Index", new { sortOrder = ViewBag.PriceSortParam, bookName = ViewBag.BookName, authorName = ViewBag.AuthorName, bookTypeID = ViewBag.BookTypeID, pageSize = ViewBag.pageSize })
+            </th>
+            <th>
+               教材类别
+            </th>
+            <th></th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem =>item.BookID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AuthorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Press)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishingDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookType.BookTypeName)
+                </td>
+                <td>
+                    @Html.ActionLink("编辑", "Edit", new { id = item.BookID }) |
+                    @Html.ActionLink("详细", "Details", new { id = item.BookID }) |
+                    @Html.ActionLink("删除", "Delete", new { id = item.BookID })
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-muted" colspan="12">
+                你当前选中了 <span id="selectedCount"></span> 条记录，每页 @Model.PageSize 条记录，共有 @Model.TotalItemCount 条记录。第 @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) 页，共 @Model.PageCount 页。
+            </td>
+        </tr>
+    </tfoot>
+
+
+</table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, bookName = ViewBag.BookName, authorName = ViewBag.AuthorName, bookTypeID = ViewBag.BookTypeID, pageSize = ViewBag.pageSize }),
+                               new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 5, DisplayItemSliceAndTotal = false }
+)

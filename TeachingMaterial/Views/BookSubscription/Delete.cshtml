@@ -1,0 +1,96 @@
+﻿@model TeachingMaterial.Models.SemesterCourse
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>SemesterCourse</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GradeMajor.GradeMajorID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GradeMajor.GradeMajorID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Semester.SemesterName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Semester.SemesterName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SemesterCourseNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SemesterCourseNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SemesterCourseName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SemesterCourseName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CourseType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CourseType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PostTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsNeedSubscription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsNeedSubscription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubmmitState)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubmmitState)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

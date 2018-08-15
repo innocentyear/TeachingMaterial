@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h3>教材征订系统</h3>
+    <p class="lead">教材征订系统的功能主要是在网上完成指定学期的学生教材和教师用书的征订，便于自动完成统计，自动生成订单。有很多不足之处，希望大家提出宝贵的的建议。</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>核对班级人数</h2>
+        <p>
+            在正式征订前首先要核对各班级的人数，以便生成年级专业的总人数，用于确定学生教材的数量。如发现年级专业人数不正确，新生人数按上一年级处理请联系质量科修改各班人数或开通修改权限。
+        </p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","VerifySchoolClass")">班级人数核对 &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>核对学期课程开设</h2>
+        <p>质量科是从信息平台的各专业教学计划导入，如发现需要征订教材的学期课程与实际不相符，请联系质量科修改或开通修改权限。新生课程按上一年级处理。</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","VerifySemesterCourse")">学期课程核对 &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>教材库查询</h2>
+        <p>如果教材库中无你所需的教材，请向质量科提出申请入库，按照专用的的格式交Excel档和纸制档，经教务处审定批准后才能进入此教材库。</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","VerifyBook")">教材目录核对 &raquo;</a></p>
+    </div>
+</div>

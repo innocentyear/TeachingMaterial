@@ -1,0 +1,90 @@
+﻿@model TeachingMaterial.Models.SemesterCourseViewModel
+
+@Html.AntiForgeryToken()
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+@Html.HiddenFor(model => model.SemesterCourseID)
+
+<div class="form-group">
+    <label for="SemesterID" class="control-label col-md-2">学期</label>
+    <div class="col-md-10">
+        @Html.DropDownList("SemesterID", Model.SemesterList, htmlAttributes: new { @class = "form-control", id = "modalSemester" })
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="GradeID" class="control-label col-md-2">年级</label>
+    <div class="col-md-10">
+        @Html.DropDownList("GradeID", Model.GradesList, htmlAttributes: new { @class = "form-control", id = "modalGrade" })
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="DepartmentID" class="control-label col-md-2">部门</label>
+    <div class="col-md-10">
+        @Html.DropDownList("DepartmentID", Model.DepartmentList, "全部", htmlAttributes: new { @class = "form-control", id = "modalDepartment" })
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="MajorID" class="control-label col-md-2">专业</label>
+    <div class="col-md-10">
+        @Html.DropDownList("MajorID", Model.MajorsList, htmlAttributes: new { @class = "form-control", id = "modalMajor" })
+    </div>
+</div>
+<span class="help-block">课程代码和课程名称，要与信息平台一致</span>
+<table id="semesterCourseTable" class="table table-bordered">
+    <tr>
+        <th>@Html.LabelFor(model => model.SemesterCourseNumber, htmlAttributes: new { @class = "control-label" })</th>
+        <th>@Html.LabelFor(model => model.SemesterCourseName, htmlAttributes: new { @class = "control-label" })</th>
+        <th>@Html.LabelFor(model => model.CourseType, htmlAttributes: new { @class = "control-label" })</th>
+    </tr>
+    <tr>
+        <td>@Html.EditorFor(model => model.SemesterCourseNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+        <td>@Html.EditorFor(model => model.SemesterCourseName, new { htmlAttributes = new { @class = "form-control" } })</td>
+        <td>@Html.EnumDropDownListFor(model => model.CourseType, htmlAttributes: new { @class = "form-control" })</td>
+    </tr>
+
+</table>
+
+
+<br />
+<div class="btn-group">
+    <a href="#" class="btn btn-success" id="addtr">增加一行课程</a> @* 改成链接形式的标签 点击 增加 就不再自动提交了。*@
+    <a href="#" class="btn btn-warning" id="deltr">删除最后一行课程</a>
+</div>
+
+
+@Scripts.Render("~/bundles/jqueryval")  @*将非侵入式验证文件加在表单的分部视图中，既可以加提交的Post表单中添加验证，又避免了Index视图的get 查询方法中，表单int类型外键提交验证的错误。*@
+<script>
+    $(function () {
+        $("#addtr").click(function () {
+            $tr = $("<tr class='schoolClass'></tr>");
+            $("<td><input type='text' name='SemesterCourseNumber' value='@Model.SemesterCourseNumber' class='form-control' /></td>").appendTo($tr);
+            $("<td><input type='text' name='SemesterCourseName' value='@Model.SemesterCourseName' class='form-control' /></td>").appendTo($tr);
+            $("<td><select class='form-control' name='CourseType'><option value='0'>专业课</option><option value='1'>公共课</option><option value='2'>思政课</option></select></td>").appendTo($tr);
+            $("#semesterCourseTable").append($tr);
+        });
+
+        $("#deltr").click(function () {
+                $("#semesterCourseTable tr:last").remove();
+        });
+
+
+         $("#modalDepartment").change(function () {
+            var selectedGradeId = $("#modalGrade").val();
+            var selectedDepartmentId = $("#modalDepartment").val();
+            $.getJSON('@Url.Action("GetModalMajorList")', { gradeID: selectedGradeId,departmentID: selectedDepartmentId }).success(function (data) {
+                        $("#modalMajor").empty();
+                        $("#modalMajor").append("<option value=''>全部</option>");
+                        $.each(data, function (i, p) {
+                            $("#modalMajor").append("<option value='" + p.majorID + "' >" + p.majorName + "</option>");
+                        });
+                    });
+
+            });
+
+
+    });
+
+</script>

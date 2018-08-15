@@ -1,0 +1,54 @@
+﻿
+@model PagedList.IPagedList<TeachingMaterial.Models.NoticeIndexViewModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "查看公告";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("NoticeList", "Notice", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <label for="pageSize" class="control-label">每页指定记录数：</label>
+    <div class="form-group">
+        <input type="number" name="pageSize" value="@ViewBag.pageSize" class="form-control" size="1" maxlength="4" min="1" max="1000" /> @* 使用新的Html5标签 <input type="number">*@
+        @* @Html.TextBox("pageSize", ViewBag.pageSize as string, htmlAttributes: new { @class = "form-control", size = "1", maxlength = "2" })*@
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <label for="searchTitle" class="control-label">通过标题查找：</label>
+    <div class="form-group">
+        @Html.TextBox("searchTitle", ViewBag.searchTitle as string, htmlAttributes: new { @class = "form-control", placeholder = "请输入需要查找的公告标题" })
+    </div>
+    <text>&nbsp;&nbsp;</text>
+    <input type="submit" value="查找" class="btn btn-primary" />
+}
+
+
+<br />
+<table class="table table-hover table-striped">    
+    
+    <tbody>
+        @foreach (var notice in Model)
+        {
+          <tr>
+               <td class="col-md-3">
+                   <a href="@Url.Action("ShowNotice", "Notice", new { NoticeID =notice.NoticeID})"><span class="glyphicon glyphicon-th"> @notice.NoticeTitle</span></a>
+               </td>
+              <td class="col-md-2">@Html.DisplayFor(modelItem =>notice.AuthorName)</td>
+              <td class="col-md-2">@Html.DisplayFor(modelItem =>notice.PostTime)</td>@*//强类型的辅助方法会引用模型类的数据注解，显示成日期格式。如果此时使用 @article.PostTime 而不是使用DisplayFor强类型的辅助方法，还是会显示日期时间格式。而不是仅有日期格式。*@
+               
+          </tr> 
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th class="text-info" colspan="5">
+                每页 @Model.PageSize 条记录，共有 @Model.TotalItemCount 条记录。第 @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) 页，共 @Model.PageCount 页。
+            </th>
+        </tr>
+    </tfoot>
+</table>
+@Html.PagedListPager(Model, page => Url.Action("NoticeList", new { page, searchTitle = ViewBag.searchTitle, pageSize = ViewBag.pageSize }),
+                               new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 5, DisplayItemSliceAndTotal = false }
+)
+

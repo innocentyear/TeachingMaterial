@@ -1,0 +1,73 @@
+﻿<!-- 指定评审人员的模态框 -->
+<div class="modal fade" id="specifiedExpertsModal" tabindex="-1" role="dialog" aria-labelledby="specifiedSystemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="specifiedSystemModalLabel">指定征订人员</h4>
+            </div>
+            <div class="modal-body" id="specifiedExpertsModalPreview">
+
+                @*未使用表单直接提交*@
+               @using (Html.BeginForm("SpecifyAministrators", "Department", FormMethod.Post, htmlAttributes: new { id = "specifyAministratorForm" }))
+                 {
+                   @Html.AntiForgeryToken();
+
+
+                <div class="form-horizontal">
+
+                    <div id="hiddenDepartmentID">
+                        @*隐藏的 部门字段*@
+                    </div>
+                    <div class="form-group">
+                        <label for="departmentID" class="control-label col-md-2">选择部门</label>
+                        <div class="col-md-5">
+                            <select id="departmentID" class="form-control">
+                                <option value="">全部部门</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="leftExperts" class="control-label col-md-2">选择征订人员</label>
+                        <div class="col-md-4">
+                            <select id="leftExperts" multiple class="form-control" size="20"></select>
+                            @* @Html.ListBox("leftExperts",null, new { @class = "form-control", size = "10", id = "lb_Origin" })*@
+                        </div>
+                        <div class="col-md-2">
+                            <button id="btn_addItems" class="btn btn-primary btn-block" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                            <br />
+                            <br />
+                            <button id="btn_subItems" class="btn btn-primary btn-block" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button>
+
+                        </div>
+                        <div class="col-md-4">
+                            @*@Html.ListBox("rightExperts", ViewBag.RightReviewIndexItems as MultiSelectList, new { @class = "form-control", size = "10", id = "lb_Result" })*@
+                            <select id="rightExperts" multiple class="form-control" name="chooseAdministratorsID" size="20">
+
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+               }
+
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">
+                   关闭
+                </button>
+                <button type="button" class="btn btn-success" id="specifiedExperts-btn">确认征订人员</button>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

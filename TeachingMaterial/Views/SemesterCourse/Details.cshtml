@@ -1,0 +1,74 @@
+﻿@model TeachingMaterial.Models.SemesterCourse
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SemesterCourse</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GradeMajor.GradeMajorID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GradeMajor.GradeMajorID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Semester.SemesterName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Semester.SemesterName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SemesterCourseNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SemesterCourseNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SemesterCourseName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SemesterCourseName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CouseType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CouseType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PostTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SemesterCourseID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
